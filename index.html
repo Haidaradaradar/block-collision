@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Block Collision</title>
+  <style>
+    body { font-family: sans-serif; }
+    .control { margin-top: 8px; }
+    textarea { font-family: monospace; }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas" width="700" height="230"
+        style="border:1px solid black"></canvas>
+
+<div class="control">
+  Mass 1:
+  <input id="sliderM1" type="range" min="0" max="2" step="1" value="0">
+  <span id="valueM1">10^0</span>
+</div>
+
+<div class="control">
+  Mass 2:
+  <input id="sliderM2" type="range" min="0" max="6" step="1" value="0">
+  <span id="valueM2">10^0</span>
+</div>
+
+<div class="control">
+  <b>Collision Log</b><br>
+  <textarea id="logArea" rows="10" cols="80" readonly></textarea>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
