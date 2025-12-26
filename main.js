@@ -75,11 +75,25 @@ function logCollision(type) {
   logArea.scrollTop = logArea.scrollHeight;
 }
 
+function addLogValue(type) {
+  return `${collisionCount}\t${type}\t` +
+    `x1=${(block1.x + block1.w/2).toFixed(4)}\t` +
+    `v1=${block1.v.toFixed(4)}\t` +
+    `x2=${(block2.x + block2.w/2).toFixed(4)}\t` +
+    `v2=${block2.v.toFixed(4)}\n`;
+}
+
+function inputLogValue(logValue) {
+  logArea.value += logValue
+  logArea.scrollTop = logArea.scrollHeight;
+}
+
 // =====================
 // EVENT-BASED PHYSICS
 // =====================
 function stepPhysics(dt) {
   let remaining = dt;
+  let logVal = '';
 
   while (remaining > 0) {
 
@@ -106,7 +120,8 @@ function stepPhysics(dt) {
     if (tNext === tWall) {
       block1.v = -block1.v;
       collisionCount++;
-      logCollision("wall");
+      // logCollision("wall");
+      logVal += addLogValue("wall");
     }
 
     // block collision
@@ -123,13 +138,15 @@ function stepPhysics(dt) {
         ((m2 - m1)/(m1 + m2))*u2;
 
       collisionCount++;
-      logCollision("block");
+      // logCollision("block");
+      logVal += addLogValue("block");
     }
 
     else {
       break;
     }
   }
+  inputLogValue(logVal);
 }
 
 // =====================
@@ -186,3 +203,4 @@ function loop() {
   requestAnimationFrame(loop);
 }
 loop();
+
