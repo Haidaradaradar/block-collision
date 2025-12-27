@@ -64,17 +64,6 @@ function resetSimulation() {
 // =====================
 // LOGGING
 // =====================
-function logCollision(type) {
-  logArea.value +=
-    `${collisionCount}\t${type}\t` +
-    `x1=${(block1.x + block1.w/2).toFixed(4)}\t` +
-    `v1=${block1.v.toFixed(4)}\t` +
-    `x2=${(block2.x + block2.w/2).toFixed(4)}\t` +
-    `v2=${block2.v.toFixed(4)}\n`;
-
-  logArea.scrollTop = logArea.scrollHeight;
-}
-
 function addLogValue(type) {
   return `${collisionCount}\t${type}\t` +
     `x1=${(block1.x + block1.w/2).toFixed(4)}\t` +
@@ -83,9 +72,37 @@ function addLogValue(type) {
     `v2=${block2.v.toFixed(4)}\n`;
 }
 
+function countLines(text) {
+  if (text.length === 0) return 0;
+  let count = 1;
+
+  for (let i = 0; i < text.length; i++) {
+    if (text.charCodeAt(i) === 10) count++; // '\n'
+  }
+
+  return count;
+}
+
+function logValLimiter(logValue, maxLines) {
+  let numOfLines = countLines(logValue);
+
+  if (numOfLines >= maxLines) {
+    let index = 0;
+    for (let i = 0; i < (numOfLines - maxLines - 1); i++) {
+      index = logValue.indexOf('\n', index);
+      if (index === -1) return ''; // fewer than n lines
+      index++; // move past the newline
+    }
+    logValue = logValue.slice(index)
+  }
+
+  return logValue
+}
+
 function inputLogValue(logValue) {
-  logArea.value += logValue
-  logArea.scrollTop = logArea.scrollHeight;
+  logArea.value += logValue;
+  logArea.value = logValLimiter(logArea.value, 50);
+  
 }
 
 // =====================
@@ -94,6 +111,8 @@ function inputLogValue(logValue) {
 function stepPhysics(dt) {
   let remaining = dt;
   let logVal = '';
+  let isCollideWall = false;
+  let isCollideBlock = false;
 
   while (remaining > 0) {
 
@@ -118,14 +137,15 @@ function stepPhysics(dt) {
 
     // wall collision
     if (tNext === tWall) {
+      isCollideWall = true;
       block1.v = -block1.v;
       collisionCount++;
-      // logCollision("wall");
       logVal += addLogValue("wall");
     }
 
     // block collision
     else if (tNext === tBlock) {
+      isCollideBlock = true;
       let u1 = block1.v, u2 = block2.v;
       let m1 = block1.m, m2 = block2.m;
 
@@ -138,7 +158,6 @@ function stepPhysics(dt) {
         ((m2 - m1)/(m1 + m2))*u2;
 
       collisionCount++;
-      // logCollision("block");
       logVal += addLogValue("block");
     }
 
@@ -147,6 +166,9 @@ function stepPhysics(dt) {
     }
   }
   inputLogValue(logVal);
+  if (isCollideBlock === true && isCollideWall === true) {
+    logArea.scrollTop = logArea.scrollHeight;
+  }
 }
 
 // =====================
@@ -203,4 +225,5 @@ function loop() {
   requestAnimationFrame(loop);
 }
 loop();
+
 
